@@ -1,0 +1,17 @@
+SELECT DISTINCT r.id, r.name, r.sum_star / r.num_customer AS avg_star
+FROM restaurants r
+JOIN visited_restaurants vr1 ON r.id = vr1.restaurant_id
+JOIN visited_restaurants vr2 ON vr1.user_id = vr2.user_id
+WHERE vr2.restaurant_id IN (
+    SELECT vr3.restaurant_id
+    FROM visited_restaurants vr3
+    WHERE vr3.user_id = 1
+)
+AND vr2.user_id <> 1
+AND r.id NOT IN (
+    SELECT vr4.restaurant_id
+    FROM visited_restaurants vr4
+    WHERE vr4.user_id = 1
+)
+ORDER BY avg_star DESC
+LIMIT 5;
