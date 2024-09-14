@@ -15,3 +15,42 @@ AND r.id NOT IN (
 )
 ORDER BY avg_star DESC
 LIMIT 5;
+
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import service.RestaurantService;
+
+@WebServlet("/displayImage")
+public class DisplayImageServlet {
+	private static final long serialVersionUID = 1L;
+	private RestaurantService restaurantService = new restaurantService();
+
+    public DisplayImageServlet() {
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int restaurantId = Integer.parseInt(request.getParameter("id"));
+        response.setContentType("image/png");
+
+        byte[] byteArray = restaurantService.getImageBytesByRestaurantId(restaurantId);
+    	InputStream is = new ByteArrayInputStream(byteArray);
+    	BufferedInputStream bufferedIs = new BufferedInputStream(is);
+        BufferedImage img = ImageIO.read(bufferedIs);
+
+        OutputStream outputStream = response.getOutputStream();
+        ImageIO.write(img, "png", outputStream);
+        outputStream.flush();
+	}
+}
