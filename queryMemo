@@ -54,3 +54,91 @@ public class DisplayImageServlet {
         outputStream.flush();
 	}
 }
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー検索</title>
+</head>
+<body>
+    <h1>ユーザー検索</h1>
+    <input type="text" id="searchInput" placeholder="ユーザー名を入力">
+    <ul id="userList">
+    </ul>
+    <script>
+      const searchUsers = () => {
+        const name = document.querySelector("#searchInput").value;
+
+        fetch(`/someapp/searchUser?name=${name}`)
+          .then(response => response.json())
+          .then(data => {
+            const userList = document.querySelector("#userList");
+            userList.innerHTML = "";
+            data.forEach(user => {
+              const li = document.createElement("li");
+              li.textContent = user.name;
+              userList.appendChild(li);
+            });
+          })
+          .catch(error => console.error('Error:', error));
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        searchUsers();
+        document.getElementById("searchInput").addEventListener("input", searchUsers);
+      });
+    </script>
+</body>
+</html>
+
+public List<User> getUsersByNamePrefix(String name) {
+		List<User> users = new ArrayList<>();
+		String query = "SELECT id, name from users";
+		if (name != null && !name.isEmpty()) query += " WHERE name LIKE ?";
+		try (Connection conn = dataSource.getConnection();
+	          PreparedStatement stmt = conn.prepareStatement(query)) {
+			if (name != null && !name.isEmpty()) stmt.setString(1, name+"%");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+                users.add(new User(rs.getInt("id"), rs.getString("name")));
+            }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return users;
+	}
+package servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import com.google.gson.Gson;
+
+import model.User;
+import service.UserService;
+
+
+@WebServlet("/searchUser")
+public class SearchUserServlet extends HttpServlet {
+    private UserService userService = new UserService();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String queryName = request.getParameter("name");
+        List<User> users = userService.getUsersByNamePrefix(queryName);
+        String jsonResponse = new Gson().toJson(users);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print(jsonResponse);
+        out.flush();
+    }
+}
