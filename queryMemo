@@ -1,3 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログインと新規登録</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .disabled {
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authModal">
+    ログイン / 新規登録
+  </button>
+</div>
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="authModalLabel">ログイン / 新規登録</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">ログイン</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" id="signup-tab" data-bs-toggle="tab" href="#signup" role="tab" aria-controls="signup" aria-selected="false">新規登録</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+            <form class="mt-3" id="loginForm">
+              <div class="mb-3">
+                <label for="loginUsername" class="form-label">ユーザー名</label>
+                <input class="form-control" type="text" id="loginUsername" required>
+              </div>
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label">パスワード</label>
+                <input class="form-control" type="password" id="loginPassword" required>
+              </div>
+              <div class="d-grid">
+                <input type="submit" value="ログイン" disabled="true" class="disabled btn btn-primary" id="loginSubmitBtn" >
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
+            <form class="mt-3" id="signupForm">
+              <div class="mb-3">
+                <label for="signupUsername" class="form-label">ユーザー名</label>
+                <input class="form-control" type="text" id="signupUsername" required>
+              </div>
+              <div class="mb-3">
+                <label for="signupPassword" class="form-label">パスワード</label>
+                <input class="form-control" type="password" id="signupPassword" required>
+              </div>
+              <div class="d-grid">
+                <input type="submit" value="新規登録" disabled="true" class="disabled btn btn-primary" id="signupSubmitBtn" >
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="loginSignup.js" defer></script>
+</body>
+</html>
+
 SELECT DISTINCT r.id, r.name, r.sum_star / r.num_customer AS avg_star
 FROM restaurants r
 JOIN visited_restaurants vr1 ON r.id = vr1.restaurant_id
